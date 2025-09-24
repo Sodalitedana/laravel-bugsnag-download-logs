@@ -234,7 +234,7 @@ class LaravelBugsnagDownloadLogsCommand extends Command
                 info("Name: {$foundProject['name']}");
                 info("Slug: {$foundProject['slug']}");
                 info("ID: {$foundProject['id']}");
-                info("Open errors: ".($foundProject['open_error_count'] ?? 0));
+                info('Open errors: '.($foundProject['open_error_count'] ?? 0));
 
                 return $foundProject['id'];
             } else {
