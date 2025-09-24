@@ -21,10 +21,10 @@ class LaravelBugsnagDownloadLogsServiceProvider extends PackageServiceProvider
             ->hasCommand(LaravelBugsnagDownloadLogsCommand::class);
     }
 
-//    public function boot(): void
-//    {
-//        $this->publishes([
-//            __DIR__.'/../config/laravel-bugsnag-download-logs.php' => config_path('bugsnag-errors.php'),
-//        ]);
-//    }
+    //    public function boot(): void
+    //    {
+    //        $this->publishes([
+    //            __DIR__.'/../config/laravel-bugsnag-download-logs.php' => config_path('bugsnag-errors.php'),
+    //        ]);
+    //    }
 }
