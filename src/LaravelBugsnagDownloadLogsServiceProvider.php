@@ -17,9 +17,7 @@ class LaravelBugsnagDownloadLogsServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-bugsnag-download-logs')
-            ->hasConfigFile()
-            ->hasViews()
-//            ->hasMigration('create_laravel_bugsnag_download_logs_table')
+            ->hasConfigFile('laravel-bugsnag-download-logs')
             ->hasCommand(LaravelBugsnagDownloadLogsCommand::class);
     }
 }
