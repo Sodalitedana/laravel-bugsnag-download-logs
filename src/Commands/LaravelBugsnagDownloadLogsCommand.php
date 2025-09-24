@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Sodalitedana\LaravelBugsnagDownloadLogs\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelBugsnagDownloadLogsCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-bugsnag-download-logs';
 
     public $description = 'My command';
 
