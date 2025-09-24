@@ -31,7 +31,7 @@ composer require sodalitedana/laravel-bugsnag-download-logs
 Publish the configuration file:
 
 ```bash
-php artisan vendor:publish --provider="Sodalitedana\LaravelBugsnagDownloadLogs\LaravelBugsnagDownloadLogsServiceProvider"
+php artisan vendor:publish --tag=laravel-bugsnag-download-logs-config
 ```
 
 ## Configuration
