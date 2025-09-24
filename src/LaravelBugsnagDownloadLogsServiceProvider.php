@@ -2,9 +2,9 @@
 
 namespace Sodalitedana\LaravelBugsnagDownloadLogs;
 
+use Sodalitedana\LaravelBugsnagDownloadLogs\Commands\LaravelBugsnagDownloadLogsCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Sodalitedana\LaravelBugsnagDownloadLogs\Commands\LaravelBugsnagDownloadLogsCommand;
 
 class LaravelBugsnagDownloadLogsServiceProvider extends PackageServiceProvider
 {

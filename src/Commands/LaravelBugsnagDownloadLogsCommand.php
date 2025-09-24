@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\select;
@@ -38,15 +39,16 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
         $token = config('laravel-bugsnag-download-logs.token');
 
-        if (!$token) {
+        if (! $token) {
             error('BUGSNAG_API_TOKEN non configurato nel .env');
             info('💡 Aggiungi nel file .env: BUGSNAG_API_TOKEN = your_personal_auth_token');
+
             return 1;
         }
 
         // Step 1: Seleziona organizzazione e progetto
         $projectId = $this->selectProject($token);
-        if (!$projectId) {
+        if (! $projectId) {
             return 1;
         }
 
@@ -60,22 +62,23 @@ class LaravelBugsnagDownloadLogsCommand extends Command
             $url = "https://api.bugsnag.com/projects/{$projectId}/errors";
             $params = [
                 'filters[error.status]' => $status,
-                'filters[event.since]' => $days . 'd',
+                'filters[event.since]' => $days.'d',
                 'per_page' => 100,
                 'sort' => 'last_seen',
-                'direction' => 'desc'
+                'direction' => 'desc',
             ];
 
-//            info("🌐 Chiamata API: {$url}?" . http_build_query($params));
+            //            info("🌐 Chiamata API: {$url}?" . http_build_query($params));
 
             $response = Http::withHeaders([
-                'Authorization' => 'token ' . $token,
+                'Authorization' => 'token '.$token,
                 'Content-Type' => 'application/json',
             ])->get($url, $params);
 
             if ($response->failed()) {
-                error('Errore nel recupero dei log da Bugsnag: ' . $response->status());
+                error('Errore nel recupero dei log da Bugsnag: '.$response->status());
                 error($response->body());
+
                 return 1;
             }
 
@@ -94,10 +97,10 @@ class LaravelBugsnagDownloadLogsCommand extends Command
                         'errorClass' => $error['grouping_fields']['errorClass'] ?? null,
                         'file' => $error['grouping_fields']['file'] ?? null,
                         'code' => $error['grouping_fields']['code'] ?? null,
-                    ]
+                    ],
                 ];
 
-                Log::error('Bugsnag Error: ' . ($error['error_class'] ?? 'Unknown'), $logData);
+                Log::error('Bugsnag Error: '.($error['error_class'] ?? 'Unknown'), $logData);
             }
 
             info("✅ Salvati con successo {$errorCount} errori nel laravel.log");
@@ -110,19 +113,20 @@ class LaravelBugsnagDownloadLogsCommand extends Command
                             $error['error_class'] ?? 'Unknown',
                             Str::limit($error['message'] ?? 'No message', 50),
                             isset($error['first_seen']) ? Carbon::parse($error['first_seen'])->diffForHumans() : 'Unknown',
-                            $error['grouping_fields']['file'] ?? 'Unknown'
+                            $error['grouping_fields']['file'] ?? 'Unknown',
                         ];
                     })->toArray()
                 );
 
                 if ($errorCount > 10) {
-                    info("... e altri " . ($errorCount - 10) . " errori. Controlla laravel.log per i dettagli completi.");
+                    info('... e altri '.($errorCount - 10).' errori. Controlla laravel.log per i dettagli completi.');
                 }
             }
 
             return 0;
         } catch (\Exception $e) {
-            error('Errore: ' . $e->getMessage());
+            error('Errore: '.$e->getMessage());
+
             return 1;
         }
     }
@@ -133,13 +137,14 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
             info('📋 Recupero organizzazioni...');
             $orgResponse = Http::withHeaders([
-                'Authorization' => 'token ' . $token,
+                'Authorization' => 'token '.$token,
                 'X-Version' => '2',
                 'Content-Type' => 'application/json',
             ])->get('https://api.bugsnag.com/user/organizations');
 
             if ($orgResponse->failed()) {
-                error('Errore nel recupero delle organizzazioni: ' . $orgResponse->status());
+                error('Errore nel recupero delle organizzazioni: '.$orgResponse->status());
+
                 return null;
             }
 
@@ -147,6 +152,7 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
             if (empty($organizations)) {
                 error('Nessuna organizzazione trovata.');
+
                 return null;
             }
 
@@ -157,9 +163,9 @@ class LaravelBugsnagDownloadLogsCommand extends Command
                 $orgTableData[] = [
                     'Name' => $org['name'],
                     'Slug' => $org['slug'],
-                    'ID' => $org['id']
+                    'ID' => $org['id'],
                 ];
-                $orgOptions[$org['id']] = $org['name'] . ' (' . $org['slug'] . ')';
+                $orgOptions[$org['id']] = $org['name'].' ('.$org['slug'].')';
             }
 
             table(['Name', 'Slug', 'ID'], $orgTableData);
@@ -176,12 +182,13 @@ class LaravelBugsnagDownloadLogsCommand extends Command
             info('📁 Recupero progetti...');
 
             $response = Http::withHeaders([
-                'Authorization' => 'token ' . $token,
+                'Authorization' => 'token '.$token,
                 'Content-Type' => 'application/json',
             ])->get("https://api.bugsnag.com/organizations/{$selectedOrgId}/projects");
 
             if ($response->failed()) {
-                error('Errore nel recupero dei progetti da Bugsnag: ' . $response->status());
+                error('Errore nel recupero dei progetti da Bugsnag: '.$response->status());
+
                 return null;
             }
 
@@ -189,6 +196,7 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
             if (empty($projects)) {
                 error('Nessun progetto trovato.');
+
                 return null;
             }
 
@@ -199,7 +207,7 @@ class LaravelBugsnagDownloadLogsCommand extends Command
                     'Name' => $project['name'],
                     'Slug' => $project['slug'],
                     'ID' => $project['id'],
-                    'Errors' => $project['open_error_count'] ?? 0
+                    'Errors' => $project['open_error_count'] ?? 0,
                 ];
             }
 
@@ -224,22 +232,23 @@ class LaravelBugsnagDownloadLogsCommand extends Command
             }
 
             if ($foundProject) {
-                info("✅ Progetto trovato:");
+                info('✅ Progetto trovato:');
                 info("Nome: {$foundProject['name']}");
                 info("Slug: {$foundProject['slug']}");
                 info("ID: {$foundProject['id']}");
-                info("Errori 'open': " . ($foundProject['open_error_count'] ?? 0));
-
+                info("Errori 'open': ".($foundProject['open_error_count'] ?? 0));
 
                 return $foundProject['id'];
             } else {
                 error("❌ Progetto '{$name}' non trovato.");
-                info("💡 Usa uno dei nomi o slug mostrati nella tabella sopra.");
+                info('💡 Usa uno dei nomi o slug mostrati nella tabella sopra.');
+
                 return null;
             }
 
         } catch (\Exception $e) {
-            error('Errore: ' . $e->getMessage());
+            error('Errore: '.$e->getMessage());
+
             return null;
         }
     }
