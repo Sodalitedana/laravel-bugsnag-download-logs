@@ -1,82 +1,212 @@
-# This is my package laravel-bugsnag-download-logs
+# Laravel Bugsnag Download Logs
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/sodalitedana/laravel-bugsnag-download-logs.svg?style=flat-square)](https://packagist.org/packages/sodalitedana/laravel-bugsnag-download-logs)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/sodalitedana/laravel-bugsnag-download-logs/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/sodalitedana/laravel-bugsnag-download-logs/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/sodalitedana/laravel-bugsnag-download-logs/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/sodalitedana/laravel-bugsnag-download-logs/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/sodalitedana/laravel-bugsnag-download-logs.svg?style=flat-square)](https://packagist.org/packages/sodalitedana/laravel-bugsnag-download-logs)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+A Laravel package that provides an Artisan command to download error logs from Bugsnag and save them to your application's `laravel.log` file.
 
-## Support us
+## Features
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-bugsnag-download-logs.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-bugsnag-download-logs)
+- 🔍 **Select organization and project** via interactive interface
+- 📥 **Download errors from Bugsnag** with customizable filters
+- 📝 **Save to laravel.log** with structured format
+- 🎯 **Customizable error status filter** via `--status` option (open, resolved, etc.)
+- 📅 **Configurable time period** via `--days` option (default: last 7 days)
+- 📊 **Tabular preview** of downloaded errors
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+## Requirements
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- PHP ^8.3
+- Laravel ^11.0|^12.0
+- Bugsnag API Token (Personal Auth Token)
 
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
 composer require sodalitedana/laravel-bugsnag-download-logs
 ```
 
-You can publish and run the migrations with:
+Publish the configuration file:
 
 ```bash
-php artisan vendor:publish --tag="laravel-bugsnag-download-logs-migrations"
-php artisan migrate
+php artisan vendor:publish --provider="Sodalitedana\LaravelBugsnagDownloadLogs\LaravelBugsnagDownloadLogsServiceProvider"
 ```
 
-You can publish the config file with:
+## Configuration
 
-```bash
-php artisan vendor:publish --tag="laravel-bugsnag-download-logs-config"
+### 1. Bugsnag API Token
+
+Add your Bugsnag Personal Auth Token to your `.env` file:
+
+```env
+BUGSNAG_API_TOKEN=your_personal_auth_token_here
 ```
 
-This is the contents of the published config file:
+**How to get the token:**
+1. Go to [Bugsnag Settings → My Account](https://app.bugsnag.com/settings/personal-auth-tokens)
+2. Click "Generate new token"
+3. Copy the generated token
+
+### 2. Configuration File
+
+The configuration file is published to `config/laravel-bugsnag-download-logs.php`:
 
 ```php
+<?php
+
 return [
+    'token' => env('BUGSNAG_API_TOKEN'),
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-bugsnag-download-logs-views"
 ```
 
 ## Usage
 
-```php
-$laravelBugsnagDownloadLogs = new Sodalitedana\LaravelBugsnagDownloadLogs();
-echo $laravelBugsnagDownloadLogs->echoPhrase('Hello, Sodalitedana!');
-```
+### Basic Command
 
-## Testing
+Run the command to download errors:
 
 ```bash
-composer test
+php artisan bugsnag:download-logs
 ```
 
-## Changelog
+The command will guide you through:
+1. **Organization selection** from your available Bugsnag organizations
+2. **Project selection** by entering the project name or slug
+3. **Automatic download** of errors to `laravel.log`
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+### Available Options
+
+```bash
+# Download errors from the last 30 days
+php artisan bugsnag:download-logs --days=30
+
+# Download only resolved errors
+php artisan bugsnag:download-logs --status=resolved
+
+# Combine options
+php artisan bugsnag:download-logs --days=7 --status=open
+```
+
+**Available options:**
+- `--days=N` : Number of days to retrieve errors from (default: 7)
+- `--status=X` : Error status to filter by (default: open)
+  - Possible values: `open`, `resolved`, `ignored`, `snoozed`
+
+## Examples
+
+### Example Output
+
+```bash
+$ php artisan bugsnag:download-logs
+
+🐛 Bugsnag Organization & Projects Finder + Logs Downloader
+
+📋 Fetching organizations...
+
+🏢 Available organizations:
+┌─────────────┬─────────────┬──────────────────────────┐
+│ Name        │ Slug        │ ID                       │
+├─────────────┼─────────────┼──────────────────────────┤
+│ My Company  │ my-company  │ 507f1f77bcf86cd799439011 │
+└─────────────┴─────────────┴──────────────────────────┘
+
+Select an organization: My Company (my-company)
+
+✅ Selected organization: My Company
+📁 Fetching projects...
+
+📦 Available projects:
+┌─────────────┬─────────────┬──────────────────────────┬─────────────┐
+│ Name        │ Slug        │ ID                       │ Open Errors │
+├─────────────┼─────────────┼──────────────────────────┼─────────────┤
+│ My App      │ my-app      │ 507f1f77bcf86cd799439012 │ 15          │
+└─────────────┴─────────────┴──────────────────────────┴─────────────┘
+
+Enter project name (name or slug): my-app
+
+✅ Project found:
+Name: My App
+Slug: my-app
+ID: 507f1f77bcf86cd799439012
+Open errors: 15
+
+📥 Downloading open errors from the last 7 days...
+⚡ Processing 15 errors...
+✅ Successfully saved 15 errors to laravel.log
+
+┌─────────────────────┬───────────────────────────────┬─────────────────┬─────────────────────┐
+│ Error Class         │ Message                       │ First Seen      │ File                │
+├─────────────────────┼───────────────────────────────┼─────────────────┼─────────────────────┤
+│ RuntimeException    │ Database connection failed    │ 2 hours ago     │ app/Models/User.php │
+│ InvalidArgumentEx.. │ Invalid email format          │ 5 hours ago     │ app/Http/Contro...  │
+└─────────────────────┴───────────────────────────────┴─────────────────┴─────────────────────┘
+
+... and 5 more errors. Check laravel.log for complete details.
+```
+
+### Error Log Format
+
+Errors are saved to `laravel.log` in this format:
+
+```
+[2024-09-24 14:30:22] local.ERROR: Bugsnag Error: RuntimeException {
+    "error_class": "RuntimeException",
+    "message": "Database connection failed",
+    "context": "production",
+    "first_seen": "2024-09-24T12:30:22.000Z",
+    "grouping_fields": {
+        "errorClass": "RuntimeException",
+        "file": "app/Models/User.php",
+        "code": "42"
+    }
+}
+```
+
+## Troubleshooting
+
+### Token Not Configured
+
+```
+❌ BUGSNAG_API_TOKEN not configured in .env
+💡 Add to .env file: BUGSNAG_API_TOKEN = your_personal_auth_token
+```
+
+**Solution:** Verify the token is present in your `.env` file and the configuration file has been published.
+
+### Project Not Found
+
+```
+❌ Project 'project-name' not found.
+💡 Use one of the names or slugs shown in the table above.
+```
+
+**Solution:** Use exactly the name or slug shown in the available projects table.
+
+### Bugsnag API Error
+
+```
+❌ Error retrieving logs from Bugsnag: 401
+```
+
+**Solutions:**
+- Verify the token is valid and not expired
+- Check you have permissions to access the project
+- Ensure the token has read permissions for errors
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+If you discover a security vulnerability, please send an email to sodalite.dana@gmail.com.
 
 ## Credits
 
-- [Sodalitedana](https://github.com/Sodalitedana)
+- [Sodalitedana](https://github.com/sodalitedana)
+- [FrankFlow](https://github.com/FrankFlow)
 - [All Contributors](../../contributors)
 
 ## License
