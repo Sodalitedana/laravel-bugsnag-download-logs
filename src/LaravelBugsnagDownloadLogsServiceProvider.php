@@ -24,7 +24,7 @@ class LaravelBugsnagDownloadLogsServiceProvider extends PackageServiceProvider
     public function boot(): void
     {
         $this->publishes([
-           __DIR__.'/../config/laravel-bugsnag-download-logs.php' => config_path('bugsnag-errors.php'),
+            __DIR__.'/../config/laravel-bugsnag-download-logs.php' => config_path('bugsnag-errors.php'),
         ]);
     }
 }
