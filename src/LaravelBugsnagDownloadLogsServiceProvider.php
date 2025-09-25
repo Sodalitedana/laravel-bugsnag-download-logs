@@ -2,24 +2,29 @@
 
 namespace Sodalitedana\LaravelBugsnagDownloadLogs;
 
+use Illuminate\Support\ServiceProvider;
 use Sodalitedana\LaravelBugsnagDownloadLogs\Commands\LaravelBugsnagDownloadLogsCommand;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class LaravelBugsnagDownloadLogsServiceProvider extends PackageServiceProvider
+class LaravelBugsnagDownloadLogsServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
-    {
-        $package
-            ->name('laravel-bugsnag-download-logs')
-//            ->hasConfigFile()
-            ->hasCommand(LaravelBugsnagDownloadLogsCommand::class);
-    }
-
     public function boot(): void
     {
         $this->publishes([
             __DIR__.'/../config/laravel-bugsnag-download-logs.php' => config_path('laravel-bugsnag-download-logs.php'),
         ], 'laravel-bugsnag-download-logs-config');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                LaravelBugsnagDownloadLogsCommand::class,
+            ]);
+        }
+    }
+
+    public function register(): void
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/laravel-bugsnag-download-logs.php',
+            'laravel-bugsnag-download-logs'
+        );
     }
 }
