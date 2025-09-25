@@ -65,10 +65,7 @@
         "laravel": {
             "providers": [
                 "Sodalitedana\\LaravelBugsnagDownloadLogs\\LaravelBugsnagDownloadLogsServiceProvider"
-            ],
-            "aliases": {
-                "LaravelBugsnagDownloadLogs": "Sodalitedana\\LaravelBugsnagDownloadLogs\\Facades\\LaravelBugsnagDownloadLogs"
-            }
+            ]
         }
     },
     "minimum-stability": "dev",
