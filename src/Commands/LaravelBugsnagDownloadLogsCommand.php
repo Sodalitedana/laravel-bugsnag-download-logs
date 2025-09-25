@@ -214,9 +214,14 @@ class LaravelBugsnagDownloadLogsCommand extends Command
                 $tableData
             );
 
+            $exampleProject = $projects[0] ?? null;
+            $placeholder = $exampleProject
+                ? "e.g. {$exampleProject['name']} or {$exampleProject['slug']}"
+                : 'e.g. MyApp or my-app';
+
             $name = text(
                 label: 'Enter project name (name or slug):',
-                placeholder: 'e.g. MyApp or my-app',
+                placeholder: $placeholder,
                 required: true
             );
 
