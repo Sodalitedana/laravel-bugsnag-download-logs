@@ -52,8 +52,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Bugsnag API token
-     *
-     * @var string
      */
     protected string $token;
 
@@ -83,9 +81,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Download errors from Bugsnag for a specific project
-     *
-     * @param  string  $projectId
-     * @return int
      */
     private function downloadErrors(string $projectId): int
     {
@@ -136,9 +131,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Format error data for logging
-     *
-     * @param  array  $error
-     * @return array
      */
     private function formatErrorForLog(array $error): array
     {
@@ -157,9 +149,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Display errors table in console
-     *
-     * @param  array  $errors
-     * @return void
      */
     private function displayErrorsTable(array $errors): void
     {
@@ -206,8 +195,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Select an organization from available organizations
-     *
-     * @return string|null
      */
     private function selectOrganization(): ?string
     {
@@ -256,9 +243,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Select a project from a specific organization
-     *
-     * @param  string  $organizationId
-     * @return string|null
      */
     private function selectProjectFromOrganization(string $organizationId): ?string
     {
@@ -314,9 +298,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Display projects table
-     *
-     * @param  array  $projects
-     * @return void
      */
     private function displayProjectsTable(array $projects): void
     {
@@ -338,10 +319,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Find a project by name or slug
-     *
-     * @param  array  $projects
-     * @param  string  $name
-     * @return array|null
      */
     private function findProjectByName(array $projects, string $name): ?array
     {
@@ -357,9 +334,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Build API URL with base URL
-     *
-     * @param  string  $endpoint
-     * @return string
      */
     private function buildApiUrl(string $endpoint): string
     {
@@ -368,11 +342,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Get error value with default fallback
-     *
-     * @param  array  $error
-     * @param  string  $key
-     * @param  string  $default
-     * @return string
      */
     private function getErrorValue(array $error, string $key, string $default = 'Unknown'): string
     {
@@ -381,9 +350,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Get the default headers for Bugsnag API requests
-     *
-     * @param  array  $additionalHeaders
-     * @return array
      */
     private function getHeaders(array $additionalHeaders = []): array
     {
@@ -395,11 +361,6 @@ class LaravelBugsnagDownloadLogsCommand extends Command
 
     /**
      * Make an API request to Bugsnag
-     *
-     * @param  string  $url
-     * @param  array  $params
-     * @param  array  $additionalHeaders
-     * @return \Illuminate\Http\Client\Response|null
      */
     private function makeApiRequest(string $url, array $params = [], array $additionalHeaders = []): ?\Illuminate\Http\Client\Response
     {
@@ -417,4 +378,3 @@ class LaravelBugsnagDownloadLogsCommand extends Command
         return $response;
     }
 }
-
